@@ -1,0 +1,137 @@
+{% extends pos %}
+
+{% block content %}
+{% load static %}
+<!-- Begin Page Content -->
+
+<div id="not_right_side" class="ic-app-main-content">
+    <section class="content">
+        <div id="content-wrapper" class="ic-Layout-contentWrapper" style='flex:0 0 70%;max-width:70%;width:70%;float: left;'>
+            <div id="content" class="ic-Layout-contentMain" role="main">
+                <h3 class="loading" style="display: none;">Đang tải...</h3>
+                <div class="loaded" style="">
+                    <header class="quiz-header">
+                        <h1>{{ test.test_name }}</h1>
+                        <div class="alert">
+                            Kết quả bài kiểm tra
+                        </div>
+                        Thời gian hoàn thành: {{ current_time }}
+                    </header>
+                    <div id="questions" class="assessing">
+                        {% for qa in question_results %}
+                        <div class="quiz_sortable question_holder" aria-label="Câu hỏi {{ forloop.counter }}">
+                            <div class="display_question question multiple_choice_question" id="question_{{ qa.question.question_id }}">
+                                <div class="move">
+                                    <a class="draggable-handle" role="button" tabindex="0">
+                                        <i class="icon-drag-handle">
+                                            <span class="screenreader-only">Chuyển tới...</span>
+                                            <span class="accessibility-warning screenreader-only">Phần tử này là một thay thế dễ tiếp cận hơn để kéo và thả sắp xếp lại. Nhấn Enter hoặc Space để di chuyển câu hỏi này.</span>
+                                        </i>
+                                    </a>
+                                </div>
+                                <div class="header">
+                                    <span class="name question_name" role="heading" aria-level="2">Câu hỏi {{ forloop.counter }}</span>
+                                    <span>(Cấp độ: </span>
+                                    <span class="question_level_name" role="heading">{{ qa.question.question_level }}</span>
+                                    <span>)</span>
+                                </div>
+                                <div class="text">
+                                    <div class="question_text user_content enhanced" id="question_{{ qa.question.question_id }}_question_text">
+                                        <strong>{{ qa.question.question_content }}</strong>
+                                    </div>
+                                    <div class="answers">
+                                        {% for choice in qa.answers %}
+                                        <div class="answer" 
+                                            style="
+                                                color: {% if choice.answer_right %}green{% elif choice == qa.chosen_answer %}red{% else %}black{% endif %}; 
+                                                font-weight: {% if choice == qa.chosen_answer %}bold{% else %}normal{% endif %}
+                                            ">
+                                            <label class="answer_row">
+                                                <input type="radio" class="question_input" name="question_{{ qa.question.question_id }}" value="{{ choice.answer_id }}" id="question_{{ qa.question.question_id }}_answer_{{ choice.answer_id }}" disabled {% if choice == qa.chosen_answer %}checked{% endif %}>
+                                                <div class="answer_label">&nbsp;{{ choice.answer_content }}</div>
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="submit-button">
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='{% url 'index' %}'">Quay lại trang chủ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="right-side-wrapper" class="ic-app-main-content__secondary" style='flex:0 0 30%;max-width:30%;width:30%;float: left;'>
+            <aside id="right-side" role="complementary">
+                <br>
+                <h3 style="margin: 0px;">Câu hỏi</h3>
+                <ul id="question_list" style="max-height: 200px; overflow: auto;" class="">
+                    {% for qa in question_results %}
+                    <li id="list_question_{{ qa.question.question_id }}" class="list_question seen current_question">
+                        <a class="no-warning" href="#question_{{ qa.question.question_id }}">
+                            <i class="placeholder icon-question"><span class="screenreader-only icon-text">Chưa trả lời</span></i>Câu hỏi {{ forloop.counter }}
+                            <span class="screenreader-only marked-status"></span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div id="quiz-time-elapsed">
+                    <span class="time_header">Thời gian chạy:</span>
+                    <span style="font-size: 0.8em; padding-left: 10px;">
+                        <a href="#" class="hide_time_link">Ẩn đi</a>
+                    </span>
+                    <div class="clear"></div>
+                    <div class="time_running">21 phút, 26 giây</div>
+                </div>
+            </aside>
+        </div>
+    </section>
+</div>
+<!-- End of Main Content -->
+
+</div>
+<!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="{% url 'login' %}">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .highlight {
+        border: 2px solid red;
+    }
+    .correct {
+        color: green;
+    }
+    .incorrect {
+        color: red;
+    }
+</style>
+
+{% endblock %}

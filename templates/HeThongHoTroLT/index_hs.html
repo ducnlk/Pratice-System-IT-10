@@ -1,0 +1,218 @@
+{%extends 'HeThongHoTroLT/base_student.html'%}
+{%block content%}
+{% load static %}
+{% csrf_token %}
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Kết quả học tập</h1>
+                        <form method="POST" action="{% url 'reload_results' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="student_id" value="{{ student_id }}">
+                            <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Tải lại</button>
+                        </form>
+                    </div>
+                    <!-- Content Row -->
+                    <div class="row">
+                        {% for topic in topics %}
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4" style='flex:0 0 100%;max-width:100%;width:100%;float: left;'>
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Chủ đề {{ topic.name }}
+                                            </div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ topic.percent }}%</div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="progress progress-sm mr-2">
+                                                        <div class="progress-bar bg-info" role="progressbar"
+                                                            style="width: {{ topic.percent }}%" aria-valuenow="{{ topic.percent }}" aria-valuemin="0"
+                                                            aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+
+                    <!-- Content Row -->
+                    <div class="row">
+
+                        <!-- Content Column -->
+                        {% comment %} <div class="col-lg-6 mb-4">
+
+                            <!-- Project Card Example -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">TỈ lệ chung</h6>
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="small font-weight-bold">Chủ đề A <span
+                                            class="float-right">20%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 20%"
+                                            aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <h4 class="small font-weight-bold">Chủ đề B <span
+                                            class="float-right">40%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"
+                                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <h4 class="small font-weight-bold">Chủ đề D <span
+                                            class="float-right">60%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar" role="progressbar" style="width: 60%"
+                                            aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <h4 class="small font-weight-bold">Chủ đề F <span
+                                            class="float-right">80%</span></h4>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: 80%"
+                                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <h4 class="small font-weight-bold">Chủ đề G <span
+                                            class="float-right">Complete!</span></h4>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
+                                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <h4 class="small font-weight-bold">Chủ đề E <span
+                                        class="float-right">50%</span></h4>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" style="width: 50%"
+                                        aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                            
+                                </div>
+                            </div> {% endcomment %}
+
+                        <div class="col-lg-6 mb-4">
+
+                            <!-- Illustrations -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Lời khuyên cho bạn</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center">
+                                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
+                                            src="{% static 'HeThongHoTroLT/img/undraw_posting_photo.svg'%}" alt="...">
+                                    </div>
+                                    <h6 class="font-weight-bold text-secondary">Nội dung cần cải thiện: </h6>
+                                    {% if main_suggest %}
+                                        <ul>
+                                            {% for item in main_suggest %}
+                                                <li>
+                                                    <strong>Yêu cầu:</strong> {{ item.request.content }}<br>
+                                                    <strong>Bài học liên quan:</strong>
+                                                    <ul>
+                                                        {% for lesson in item.lesson %}
+                                                            <li>{{ lesson.lesson_name }}</li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p>Không có lời khuyên nào cho bạn.</p>
+                                    {% endif %}
+                            
+                                    <h6 class="font-weight-bold text-secondary">Ngoài ra bạn có thể nghiên cứu thêm các yêu cầu sau, của chương trình tin học 10</h6>
+                                    <div style="max-height: 200px; overflow-y: auto;">
+                                        {% if suggest_more %}
+                                            <ul>
+                                                {% for request in suggest_more %}
+                                                    <li>{{ request.content }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p>Không có yêu cầu cần đạt thêm nào.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+
+                            <!-- Approach -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Lời khuyên chung</h6>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="font-weight-bold text-secondary">Hầu hết các học sinh còn yếu các yêu cầu cần đạt sau: </h6>
+                                    {% if general_suggest %}
+                                            <ul>
+                                                {% for request in general_suggest %}
+                                                    <li>{{ request.content }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p>Không có yêu cầu cần đạt thêm nào.</p>
+                                        {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+        </div>
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Your Website 2021</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="{% url 'login'%}">Logout</a>
+                </div>
+            </div>
+        </div>
+{%endblock%}

@@ -1,0 +1,289 @@
+{% extends 'HeThongHoTroLT/base_student.html' %}
+{% block content %}
+{% load static %}
+<!-- Begin Page Content -->
+<section class="content">
+    <div class="container-fluid" style='flex:0 0 50%;max-width:50%;width:50%;float: left;'>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Tạo bài luyện tập môn Tin học 10</h6>
+                <input type="text" class="form-control bg-light border-0 small" placeholder="Nhập tên bài luyện tập..." aria-label="Search" aria-describedby="basic-addon2" id="practice_name" oninput="validatePracticeName()">
+            </div>
+            <form action="" method="POST" id="practice_form">
+                <div style="margin-left: 10px;">
+                    <label class="checkbox inline nowrap" for="personalized_option" style="margin-top:-3px;">
+                        <input type="radio" name="dy" id="personalized_option" onclick="showPersonalizedOptions()">
+                        Luyện tập dựa trên dữ liệu cá nhân hoá người học
+                    </label>
+                </div>
+                <div id="personalized_options" style="display: none; margin-left: 10px;">
+                    {% comment %} <nav class="navbar navbar-expand navbar-light bg-light mb-4">
+                        <label class="checkbox inline nowrap" for="test_option" style="margin-top:-3px;">
+                            <input type="radio" name="dy" id="test_option">
+                            <a class="navbar-brand" href="#" onclick="selectTestOption('Kiểm tra')">Kiểm tra</a>
+                        </label>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Các bài kiểm tra
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right animated--grow-in" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Kiểm tra 15\' HK1 lần 1')">Kiểm tra 15' HK1 lần 1</a>
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Kiểm tra 15\' HK1 lần 2')">Kiểm tra 15' HK1 lần 2</a>
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Kiểm tra 15\' HK1 lần 3')">Kiểm tra 15' HK1 lần 3</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Kiểm tra 15\' HK2 lần 1')">Kiểm tra 15' HK2 lần 1</a>
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Kiểm tra 15\' HK2 lần 2')">Kiểm tra 15' HK2 lần 2</a>
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Kiểm tra 15\' HK2 lần 3')">Kiểm tra 15' HK2 lần 3</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#" onclick="selectTestOption('Luyện tập Kiểm tra 1 tiết HK1')">Kiểm tra 1 tiết HK1</a>
+                                    <a class="dropdown-item" href="#" onclick="selectTestOption('Luyện tập Kiểm tra 1 tiết HK2')">Kiểm tra 1 tiết HK2</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#" onclick="selectTestOption('Luyện tập Kiểm tra cuối KH1')">Kiểm tra cuối KH1</a>
+                                    <a class="dropdown-item" href="#" onclick="selectTestOption('Luyện tập Kiểm tra cuối KH2')">Kiểm tra cuối KH2</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav> {% endcomment %}
+                    <nav class="navbar navbar-expand navbar-light bg-light mb-4">
+                        <label class="checkbox inline nowrap" for="topic_option" style="margin-top:-3px;">
+                            <input type="radio" name="dy" id="topic_option">
+                            <a class="navbar-brand" href="#" onclick="selectOption('Chủ đề')">Chủ đề</a>
+                        </label>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Các chủ đề
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right animated--grow-in" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Chủ đề A')">A</a>
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Chủ đề B')">B</a>
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Chủ đề D')">D</a>
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Chủ đề F')">F</a>
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Chủ đề E')">E</a>
+                                    <a class="dropdown-item" href="#" onclick="selectOption('Luyện tập Chủ đề G')">G</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div style="margin-left: 10px;">
+                    <label class="checkbox inline nowrap" for="self_select_option" style="margin-top:-3px;">
+                        <input type="radio" name="dy" id="self_select_option" onclick="showSelfSelectOptions()" >
+                        Người học tự chọn
+                    </label>
+                    
+                        {% csrf_token %}
+                        <div id="self_select_options" style="display: none;" class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã bài</th>
+                                            <th>Tên bài</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Mã bài</th>
+                                            <th>Tên bài</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody id="lesson_table_body">
+                                        <!-- Các bài học sẽ được thêm vào đây -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                
+                </div>
+                <div style="margin-left: 10px;">
+                    <label class="checkbox inline nowrap" for="time_limit_option" style="margin-top:-3px;">
+                        Thời gian giới hạn
+                    </label>
+                    <label class="checkbox inline" for="quiz_time_limit" style="padding-top:0;">
+                        <input style="width: 30px;" aria-label="How many minutes?" type="text" value="15" name="quiz[time_limit]" id="quiz_time_limit">
+                        Phút
+                    </label>
+                </div>
+                <div style="margin-left: 10px;">
+                    <label class="checkbox inline nowrap" for="quiz_question_limit" style="margin-top:-3px;">
+                        Số câu hỏi
+                    </label>
+                    <label class="checkbox inline" for="quiz_question_limit" style="padding-top:0;">
+                        <input style="width: 30px;" aria-label="How many questions?" type="text" value="15" name="number" id="quiz_question_limit">
+                        câu
+                    </label>
+                </div>
+            </form>
+        </div>
+        
+        <!-- /.container-fluid -->
+        <div class="preview_quiz_button">
+            <button class="btn btn-primary" id="preview_quiz_button" type="button" onclick="submitPracticeForm()" disabled>Xác nhận</button>
+        </div>
+    </div>
+    <div id="lesson_selection" class="container-fluid" style='display:none; flex:0 0 50%;max-width:50%;width:50%;float: left;'>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Bài học</h6>
+            </div>
+            {% for lesson in lessons %}
+            <div style="margin-left: 10px;">
+                <label class="checkbox inline nowrap" for="lesson_{{ lesson.lesson_id }}" style="margin-top:-3px;">
+                    <input type="checkbox" name="{{lesson.lesson_name}}" id="lesson_{{ lesson.lesson_id }}" value="{{ lesson.lesson_id }}" onchange="addLessonToTable('{{ lesson.lesson_name }}', '{{ lesson.lesson_id }}')">
+                    {{ lesson.lesson_name }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<!-- End of Main Content -->
+
+<!-- Footer -->
+<footer class="sticky-footer bg-white">
+    <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2020</span>
+        </div>
+    </div>
+</footer>
+<!-- End of Footer -->
+
+</div>
+<!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="{% url 'login' %}">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectOption(optionName) {
+        document.getElementById('practice_name').value = optionName;
+        validatePracticeName(); // Gọi hàm xác thực để kiểm tra điều kiện
+    }
+
+    function showPersonalizedOptions() {
+        document.getElementById('personalized_options').style.display = 'block';
+        document.getElementById('self_select_options').style.display = 'none';
+        document.getElementById('lesson_selection').style.display = 'none';
+    }
+
+    function showSelfSelectOptions() {
+        document.getElementById('personalized_options').style.display = 'none';
+        document.getElementById('self_select_options').style.display = 'block';
+        document.getElementById('lesson_selection').style.display = 'block';
+        selectOption('Bài luyện tập tự chọn')
+    }
+
+    function addLessonToTable(lessonName, lessonId) {
+        var tableBody = document.getElementById('lesson_table_body'); // Lấy phần thân của bảng (tbody) bằng ID
+        var existingRow = document.getElementById('lesson_row_' + lessonId); // Kiểm tra xem hàng (row) với ID tương ứng đã tồn tại chưa
+    
+        if (existingRow) {
+            // Nếu hàng đã tồn tại, nghĩa là người dùng đã bỏ chọn ô kiểm, xóa hàng khỏi bảng
+            tableBody.removeChild(existingRow);
+        } else {
+            // Nếu hàng chưa tồn tại, nghĩa là người dùng đã chọn ô kiểm, thêm hàng mới vào bảng
+            var row = document.createElement('tr'); // Tạo một phần tử hàng mới
+            row.id = 'lesson_row_' + lessonId; // Đặt ID cho hàng mới dựa trên lessonId
+            var cell1 = document.createElement('td'); // Tạo ô đầu tiên cho hàng mới
+            var cell2 = document.createElement('td'); // Tạo ô thứ hai cho hàng mới
+            cell1.textContent = lessonId; // Đặt nội dung cho ô đầu tiên là lessonId
+            cell2.textContent = lessonName; // Đặt nội dung cho ô thứ hai là lessonName
+            row.appendChild(cell1); // Thêm ô đầu tiên vào hàng
+            row.appendChild(cell2); // Thêm ô thứ hai vào hàng
+            tableBody.appendChild(row); // Thêm hàng vào phần thân của bảng
+        }
+    }
+
+    
+
+    function validatePracticeName() {
+        var practiceNameInput = document.getElementById('practice_name').value;
+        var confirmButton = document.getElementById('preview_quiz_button');
+        if (practiceNameInput && practiceNameInput !== 'Nhập tên bài luyện tập...') {
+            confirmButton.removeAttribute('disabled');
+        } else {
+            confirmButton.setAttribute('disabled', 'true');
+        }
+    }
+
+    // Initial validation to ensure the button is disabled if the default value is still present
+    validatePracticeName();
+
+    function submitPracticeForm() {
+        var practiceName = document.getElementById('practice_name').value;
+        var selectedLessons = [];
+        var lessonTableBody = document.getElementById('lesson_table_body').children;
+        
+        for (var i = 0; i < lessonTableBody.length; i++) {
+            var lessonId = lessonTableBody[i].cells[0].textContent;
+            selectedLessons.push(lessonId);
+        }
+    
+        var timeLimit = document.getElementById('quiz_time_limit').value;
+        var questionLimit = document.getElementById('quiz_question_limit').value;
+    
+        var data = {
+            'practice_name': practiceName,
+            'lessons': selectedLessons,
+            'time_limit': timeLimit,
+            'question_limit': questionLimit,
+            'csrfmiddlewaretoken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+        };
+        fetch("{% url 'save_a_practice' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': data.csrfmiddlewaretoken
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            
+            if (data.success) {
+                alert("Bài luyện tập đã được thêm thành công!");
+                location.href = "{% url 'practice' %}";
+            } else {
+                alert("Đã có lỗi xảy ra. Vui lòng thử lại. 1");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Đã có lỗi xảy ra. Vui lòng thử lại. 2");
+        });
+    }
+    
+</script>
+
+{% endblock %}

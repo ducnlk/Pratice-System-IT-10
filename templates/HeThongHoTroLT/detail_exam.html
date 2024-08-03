@@ -1,0 +1,157 @@
+{% extends pos %}
+
+{%block content%}
+{% load static %}
+
+<!-- Begin Page Content -->
+<div id="content" class="ic-Layout-contentMain" role="main">
+    <div id="quiz_show">
+        <header class="quiz-header">
+            <h1 id="quiz_title">
+            {{test.test_name}}
+            </h1>
+            <div class="row-fluid">
+                <div id="quiz_details_wrapper" data-submitted-count="20"></div>
+            </div>
+            <div class="row-fluid">
+        
+                <form class="form-horizontal bootstrap-form display-only" style="margin-top:18px;">
+                    <fieldset>
+                    <div class="control-group">
+                        <div class="control-label">
+                            Ngày tạo
+                        </div>
+                        <div class="controls">
+                        <span class="value">{{test.date_create}}</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label">
+                            Ngày cập nhật
+                        </div>
+                        <div class="controls">
+                        <span class="value">{{test.date_update}}</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label">
+                             Kiến thức kiểm tra
+                        </div>
+                        <div class="controls">
+                        <span class="value"> Bài 
+                            <ul>
+                                {% for lesson in lessons %}
+                                    <li>{{ lesson.lesson_name }} (Chủ đề: {{ lesson.topic.topic_id }})</li>
+                                {% endfor %}
+                            </ul>
+                        </span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                        Yêu cầu cần đạt
+                        </div>
+                        <div class="controls">
+                            <span class="value">
+                                <ul>
+                                    {% for request in requests %}
+                                        <li>{{ request.content }} (Chủ đề: {{ request.topic.topic_id }})</li>
+                                    {% endfor %}
+                                </ul>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            Giới Hạn Thời Gian
+                        </div>
+                        <div class="controls">
+                            <span class="value">
+                                {{test.test_time}} phút
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                        Điểm để giữ
+                        </div>
+                        <div class="controls">
+                        <span class="value">
+                            Cao nhất
+                        </span>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </form>
+
+    </div>
+
+      <div class="preview_quiz_button">
+        <input type="hidden" id="referer" value="{{ referer }}">
+        {% if pos == 'HeThongHoTroLT/base_teacher.html'%}
+            <a class="btn btn-primary" id="preview_quiz_button" preview="1" data-method="post" href="{% url 'do' exam.exam_id %}">Xem trước</a>
+        {% else %}
+            <a class="btn btn-primary" id="preview_quiz_button" preview="1" data-method="post" href="{% url 'do' exam.exam_id%}">Làm bài</a>
+        {% endif %}
+      </div>
+
+    <div id="quiz-submission-version-table"></div>
+  </header>
+
+</div>
+
+</div>
+<!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Your Website 2020</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="{% url 'login'%}">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var referer = document.getElementById("referer").value;
+            console.log("Referer: ", referer);
+            // Sử dụng referer trong các logic khác
+        });
+    </script>
+{%endblock%}

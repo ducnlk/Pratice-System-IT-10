@@ -1,0 +1,186 @@
+{% extends 'HeThongHoTroLT/base_teacher.html' %}
+{% block content %}
+{% load static %}
+<!-- Begin Page Content -->
+<section class="content">
+    <div class="container-fluid" style='flex:0 0 50%;max-width:50%;width:50%;float: left;'>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Tạo bài kiểm tra</h6>
+            </div>
+            <nav class="navbar navbar-expand navbar-light bg-light mb-4">
+                <a class="navbar-brand" href="#">Kiểm tra</a>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span id="selectedTest">Các bài kiểm tra</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right animated--grow-in" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#" onclick="updateSelectedTest(this)">Kiểm tra 15' HK1 lần 1</a>
+                            <a class="dropdown-item" href="#" onclick="updateSelectedTest(this)">Kiểm tra 15' HK1 lần 2</a>
+                            <a class="dropdown-item" href="#" onclick="updateSelectedTest(this)">Kiểm tra 15' HK1 lần 3</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" onclick="updateSelectedTest(this)">Kiểm tra 15' HK2 lần 1</a>
+                            <a class="dropdown-item" href="#" onclick="updateSelectedTest(this)">Kiểm tra 15' HK2 lần 2</a>
+                            <a class="dropdown-item" href="#" onclick="updateSelectedTest(this)">Kiểm tra 15' HK2 lần 3</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" onclick="updateSelectedTest(this)">Kiểm tra 1 tiết HK1</a>
+                            <a class="dropdown-item" href="#" onclick="updateSelectedTest(this)">Kiểm tra 1 tiết HK2</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" onclick="updateSelectedTest(this)">Kiểm tra cuối KH1</a>
+                            <a class="dropdown-item" href="#" onclick="updateSelectedTest(this)">Kiểm tra cuối KH2</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+            <div style="margin-left: 10px;">
+                <label class="checkbox inline nowrap" for="time_limit_option" style="margin-top:-3px;">
+                    <input type="checkbox" checked="" name="time_limit" id="time_limit_option">
+                    Thời gian giới hạn
+                </label>
+
+                <label class="checkbox inline" for="quiz_time_limit" style="padding-top:0;">
+                    <input style="width: 30px;" aria-label="How many minutes?" type="text" value="15" name="quiz[time_limit]" id="quiz_time_limit">
+                    Phút
+                </label>
+            </div>
+            <div style="margin-left: 10px;">
+                <label class="checkbox inline nowrap" for="number_option" style="margin-top:-3px;">
+                    <input type="checkbox" checked="" name="number" id="number_option">
+                    Số câu hỏi
+                </label>
+
+                <label class="checkbox inline" for="number_questions" style="padding-top:0;">
+                    <input style="width: 30px;" aria-label="How many questions?" type="text" value="15" name="number" id="number_questions">
+                    câu
+                </label>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="examTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên bài</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên bài</th>
+                            </tr>
+                        </tfoot>
+                        <tbody id="selectedLessons">
+                            <!-- Bài học được chọn sẽ xuất hiện ở đây -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="preview_quiz_button">
+                    <button class="btn btn-primary" id="confirm_exam_button">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+
+    <div class="container-fluid" style='flex:0 0 50%;max-width:50%;width:50%;float: left;'>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Bài học</h6>
+            </div>
+            {% for lesson in lessons %}
+            <div style="margin-left: 10px;">
+                <label class="checkbox inline nowrap" for="lesson_{{ lesson.lesson_id }}" style="margin-top:-3px;">
+                    <input type="checkbox" name="lesson" id="lesson_{{ lesson.lesson_id }}" value="{{ lesson.lesson_id }}">
+                    {{ lesson.lesson_name }}
+                </label>
+            </div>
+            {% endfor %}
+            <div class="card-body">
+                <div class="table-responsive">
+                </div>
+                <div class="preview_quiz_button">
+                    <button class="btn btn-primary" id="confirm_lessons_button">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+
+</section>
+<!-- End of Main Content -->
+
+<!-- Footer -->
+<footer class="sticky-footer bg-white">
+    <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2020</span>
+        </div>
+    </div>
+</footer>
+<!-- End of Footer -->
+
+<!-- JavaScript -->
+<script>
+    function updateSelectedTest(element) {
+        document.getElementById('selectedTest').innerText = element.innerText;
+    }
+
+    document.getElementById('confirm_lessons_button').addEventListener('click', function () {
+        var selectedLessons = [];
+        var checkboxes = document.querySelectorAll('input[name="lesson"]:checked');
+
+        checkboxes.forEach(function (checkbox) {
+            selectedLessons.push({
+                id: checkbox.value,
+                name: checkbox.parentElement.textContent.trim()
+            });
+        });
+
+        var lessonsTableBody = document.getElementById('selectedLessons');
+        lessonsTableBody.innerHTML = ''; // Clear existing lessons
+
+        selectedLessons.forEach(function (lesson, index) {
+            var row = '<tr><td>' + (index + 1) + '</td><td>' + lesson.name + '</td></tr>';
+            lessonsTableBody.insertAdjacentHTML('beforeend', row);
+        });
+
+        // Lưu bài học đã chọn vào biến toàn cục
+        window.selectedLessons = selectedLessons;
+    });
+//Lưu bài học của bài kiểm tra
+    document.getElementById('confirm_exam_button').addEventListener('click', function () {
+        var selectedTest = document.getElementById('selectedTest').innerText;
+
+        var data = {
+            test_name: selectedTest,
+            lessons: window.selectedLessons || []
+        };
+
+        fetch("{% url 'save_exam_data' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Network response was not ok.');
+            }
+        }).then(data => {
+            alert(data.message);
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('Lỗi khi gửi dữ liệu: ' + error.message);
+        });
+    });
+</script>
+
+{% endblock %}
