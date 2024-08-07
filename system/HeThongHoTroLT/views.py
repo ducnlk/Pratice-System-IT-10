@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, decorators, logout
 from django.views import View
 from .models import*
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .operation import*
@@ -487,10 +487,10 @@ def save_exam_data(request):
         return JsonResponse({'error': 'Chỉ chấp nhận phương thức POST'}, status=405)
 
 @require_POST
-def reload_results(request):
-    student_id = request.user.username
+def reload_results(request, student_id):
+    student_id = student_id
     result_student(student_id)
-    return redirect('index')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 @require_POST
 def reload_classroom_results(request):
     calculate_all_classroom_results()
@@ -499,3 +499,73 @@ def reload_classroom_results(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
+def detail_student(request,student_id):
+    pos = 'HeThongHoTroLT/base_teacher.html'
+    try:
+        student = Student.objects.get(student_id=student_id)
+    except Student.DoesNotExist:
+        return HttpResponse("Không tồn tại học sinh này.")
+    
+    proportion_students = Proportion_Student.objects.filter(student=student)
+    
+    pro_topics = {
+        'A': 0.0,
+        'B': 0.0,
+        'D': 0.0,
+        'F': 0.0,
+        'G': 0.0,
+        'E': 0.0,
+    }
+    
+    def convert_to_float(value):
+        if isinstance(value, str):
+            try:
+                value = value.replace(',', '.')
+                return float(value)
+            except ValueError:
+                return 0.0
+        elif isinstance(value, (int, float)):
+            return float(value)
+        else:
+            return 0.0
+    
+    main_suggest = []
+    suggest_more = []
+    
+    for proportion in proportion_students:
+        request_topic = proportion.request.topic.topic_id
+        request_percent = convert_to_float(proportion.request.percent)
+        proportion_percent = convert_to_float(proportion.percent)
+        
+        pro_topics[request_topic] += proportion_percent * request_percent
+        
+        if proportion_percent == 0:
+            suggest_more.append(proportion.request)
+        elif proportion_percent < 60:
+            main_suggest.append({
+                'request': proportion.request,
+                'lesson': Lesson.objects.filter(lesson_request__request=proportion.request).distinct()
+            })
+    
+    topics = [{'name': key, 'percent': round(value, 2)} for key, value in pro_topics.items()]
+    # Tính tổng tất cả các percent theo request và lấy 10 đối tượng thấp nhất, không tính các giá trị bằng 0
+    request_totals = (
+                    Proportion_Student.objects.values('request')
+                    .annotate(total_percent=Sum('percent'))
+                    .filter(total_percent__gt=0)
+                    .order_by('total_percent')[:5]
+                    )
+    # Lấy danh sách request_id từ 10 request có tổng percent thấp nhất
+    request_ids = [total['request'] for total in request_totals]
+
+    # Lấy các đối tượng Request tương ứng và giữ nguyên thứ tự sắp xếp theo tổng percent
+    general_suggest = Request.objects.filter(request_id__in=request_ids).order_by('request_id')
+    contents = {
+        'student_id': student_id,
+        'topics': topics,
+        'main_suggest': main_suggest,
+        'suggest_more': suggest_more,
+        'general_suggest':general_suggest,
+        'pos' : pos,
+    }
+    return render(request, "HeThongHoTroLT/detail_student.html", contents)

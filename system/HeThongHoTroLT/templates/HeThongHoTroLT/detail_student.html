@@ -1,4 +1,4 @@
-{%extends 'HeThongHoTroLT/base_student.html'%}
+{% extends pos %}
 {%block content%}
 {% load static %}
 {% csrf_token %}
@@ -8,9 +8,9 @@
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Kết quả học tập</h1>
-                        <form method="POST" action="{% url 'reload_results' user_name %}">
+                        <form method="POST" action="{% url 'reload_results' student_id%}">
                             {% csrf_token %}
-                            <input type="hidden" name="student_id" value="{{ user_name }}">
+                            <input type="hidden" name="student_id" value="{{ student_id }}">
                             <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Tải lại</button>
                         </form>
                     </div>
